@@ -24,17 +24,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Text
 import com.yunfei.quant.R
-import com.yunfei.quant.ui.theme.BrandCyan
-import com.yunfei.quant.ui.theme.BrandNavy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/** 品牌色（取自 logo） */
+private val LogoTextColor = Color(0xFF0C2D5A)
+private val SplashBg = Color(0xFFFFFFFF)
+
+/**
+ * 冷启动欢迎页
+ *  阶段1  燕子从左侧飞入（1s）
+ *  阶段2  扇动翅膀（scaleY 循环）
+ *  阶段3  文字「云飞量化」渐显（0.5s）
+ *  阶段4  停止扇动，停留 1s 后跳转
+ */
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
     var phase by remember { mutableIntStateOf(0) }
@@ -43,21 +55,23 @@ fun SplashScreen(onFinished: () -> Unit) {
     val flapTransition = rememberInfiniteTransition(label = "flap")
     val flapScale by flapTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 0.55f,
+        targetValue = 0.62f,
         animationSpec = infiniteRepeatable(
-            animation = tween(280, easing = FastOutSlowInEasing),
+            animation = tween(300, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse,
         ),
         label = "flapScale",
     )
     val textAlpha = remember { Animatable(0f) }
+    val textOffset = remember { Animatable(24f) }
 
     LaunchedEffect(Unit) {
         phase = 1
         flyProgress.animateTo(1f, tween(1000, easing = FastOutSlowInEasing))
         phase = 2
-        delay(600)
+        delay(500)
         phase = 3
+        launch { textOffset.animateTo(0f, tween(500, easing = FastOutSlowInEasing)) }
         textAlpha.animateTo(1f, tween(500))
         phase = 4
         delay(1000)
@@ -67,7 +81,7 @@ fun SplashScreen(onFinished: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(BrandNavy, BrandCyan.copy(alpha = 0.85f)))),
+            .background(SplashBg),
         contentAlignment = Alignment.Center,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -76,7 +90,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(160.dp)
+                    .size(190.dp)
                     .graphicsLayer {
                         translationX = (1f - flyProgress.value) * -900f
                         val flapping = phase == 2 || phase == 3
@@ -84,14 +98,18 @@ fun SplashScreen(onFinished: () -> Unit) {
                         alpha = flyProgress.value
                     },
             )
-            Spacer(Modifier.height(20.dp))
-            Image(
-                painter = painterResource(R.drawable.logo_text),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = "云飞量化",
+                fontSize = 40.sp,
+                fontWeight = FontWeight.Bold,
+                color = LogoTextColor,
+                letterSpacing = 4.sp,
                 modifier = Modifier
-                    .height(56.dp)
-                    .alpha(textAlpha.value),
+                    .graphicsLayer {
+                        alpha = textAlpha.value
+                        translationY = textOffset.value
+                    },
             )
         }
     }
