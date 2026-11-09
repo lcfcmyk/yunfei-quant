@@ -1,0 +1,3 @@
+-keep class com.yunfei.quant.data.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
