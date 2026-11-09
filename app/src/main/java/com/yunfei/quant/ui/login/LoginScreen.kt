@@ -115,7 +115,7 @@ fun LoginScreen(vm: AppViewModel, onSuccess: () -> Unit) {
                     err = "请填写账号和密码"
                     return@Button
                 }
-                vm.setBaseUrl(server)
+                vm.updateBaseUrl(server)
                 loading = true
                 err = null
                 vm.login(account, password) { ok, msg ->

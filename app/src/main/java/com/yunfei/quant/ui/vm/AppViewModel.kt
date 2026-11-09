@@ -86,7 +86,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun setBaseUrl(url: String) {
+    fun updateBaseUrl(url: String) {
         baseUrl = url.trimEnd('/')
         viewModelScope.launch { prefs.setBaseUrl(baseUrl) }
     }
