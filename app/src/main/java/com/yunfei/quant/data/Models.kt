@@ -30,6 +30,8 @@ data class StrategyItem(
     val entry: Double,
     val mark: Double,
     val upl: Double,
+    val uplPct: Double = 0.0,
+    val liqPrice: Double? = null,
     val leverage: Int,
     val status: String,
     val source: String,

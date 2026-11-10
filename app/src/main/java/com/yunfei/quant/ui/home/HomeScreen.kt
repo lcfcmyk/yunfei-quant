@@ -346,13 +346,13 @@ private fun RiskCard(marginRatio: Double, liqPrice: Double?) {
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text("维持保证金率", fontSize = 11.sp,
+                    Text("安全倍数", fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(String.format(Locale.US, "%.2f%%", marginRatio),
+                    Text(String.format(Locale.US, "%.1fx", marginRatio / 100),
                         fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = color)
                 }
                 Column(horizontalAlignment = Alignment.End) {
-                    Text("预估强平价", fontSize = 11.sp,
+                    Text("最近强平价", fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
                         liqPrice?.let { String.format(Locale.US, "%,.2f", it) } ?: "--",
@@ -449,18 +449,23 @@ private fun StrategyRow(s: StrategyItem, onToggle: (String, Boolean) -> Unit) {
             ) {
                 Text(
                     (if (s.side == "long") "多" else "空") +
-                            " ${s.contracts} 张 @${s.entry} · ${s.leverage}x",
+                            " ${s.contracts} 张 @${String.format(java.util.Locale.US, "%.4f", s.entry)} · ${s.leverage}x",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    (if (up) "+" else "") + String.format(Locale.US, "%.2f", s.upl),
+                    (if (up) "+" else "") + String.format(Locale.US, "%.2f", s.upl) +
+                            "  (${if (up) "+" else ""}${s.uplPct}%)",
                     fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
                     color = if (up) sem.success else sem.danger,
                 )
             }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                "强平价 ${s.liqPrice?.let { String.format(java.util.Locale.US, "%.2f", it) } ?: "--"}",
+                fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             if (isError && s.errorMsg != null) {
-                Spacer(Modifier.height(6.dp))
                 Text(s.errorMsg, fontSize = 11.sp, color = sem.danger)
             }
         }
