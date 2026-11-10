@@ -88,7 +88,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     fun register(
         account: String,
-        nickname: String,
+        nick: String,
         password: String,
         onDone: (Boolean, String?) -> Unit,
     ) {
@@ -96,7 +96,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             _state.value = _state.value.copy(loading = true, error = null)
             try {
                 val r = service().register(
-                    com.yunfei.quant.data.RegisterReq(account, nickname, password)
+                    com.yunfei.quant.data.RegisterReq(account, nick, password)
                 )
                 if (r.ok && r.data != null) {
                     prefs.saveToken(r.data.token)
