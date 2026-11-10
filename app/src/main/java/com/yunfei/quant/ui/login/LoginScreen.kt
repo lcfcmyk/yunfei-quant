@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +35,11 @@ import com.yunfei.quant.ui.vm.AppViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(vm: AppViewModel, onSuccess: () -> Unit) {
+fun LoginScreen(
+    vm: AppViewModel,
+    onSuccess: () -> Unit,
+    onGoRegister: () -> Unit = {},
+) {
     var account by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var server by remember { mutableStateOf(vm.baseUrl) }
@@ -132,6 +137,19 @@ fun LoginScreen(vm: AppViewModel, onSuccess: () -> Unit) {
             ) else Text("登录")
         }
 
-        Spacer(Modifier.height(60.dp))
+        Spacer(Modifier.height(14.dp))
+        androidx.compose.foundation.layout.Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("还没有账号？", fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
+            TextButton(onClick = onGoRegister) {
+                Text("立即注册", fontSize = 13.sp)
+            }
+        }
+
+        Spacer(Modifier.height(50.dp))
     }
 }

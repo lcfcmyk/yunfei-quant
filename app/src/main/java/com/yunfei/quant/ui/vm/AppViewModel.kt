@@ -86,6 +86,39 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun register(
+        account: String,
+        nickname: String,
+        password: String,
+        onDone: (Boolean, String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(loading = true, error = null)
+            try {
+                val r = service().register(
+                    com.yunfei.quant.data.RegisterReq(account, nickname, password)
+                )
+                if (r.ok && r.data != null) {
+                    prefs.saveToken(r.data.token)
+                    prefs.saveNickname(r.data.nickname)
+                    prefs.setApiBound(r.data.apiBound)
+                    prefs.setTutorialSeen(r.data.tutorialSeen)
+                    loggedIn = true
+                    apiBound = r.data.apiBound
+                    tutorialSeen = r.data.tutorialSeen
+                    nickname = r.data.nickname
+                    onDone(true, null)
+                } else {
+                    onDone(false, r.message ?: "注册失败")
+                }
+            } catch (e: Exception) {
+                onDone(false, e.message ?: "网络异常")
+            } finally {
+                _state.value = _state.value.copy(loading = false)
+            }
+        }
+    }
+
     fun updateBaseUrl(url: String) {
         baseUrl = url.trimEnd('/')
         viewModelScope.launch { prefs.setBaseUrl(baseUrl) }

@@ -6,6 +6,9 @@ interface ApiService {
     @POST("api/login")
     suspend fun login(@Body req: LoginReq): ApiResult<LoginResp>
 
+    @POST("api/register")
+    suspend fun register(@Body req: RegisterReq): ApiResult<LoginResp>
+
     @GET("api/overview")
     suspend fun overview(@Header("Authorization") token: String): ApiResult<Overview>
 

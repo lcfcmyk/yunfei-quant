@@ -38,6 +38,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.yunfei.quant.ui.home.HomeScreen
 import com.yunfei.quant.ui.login.LoginScreen
+import com.yunfei.quant.ui.login.RegisterScreen
 import com.yunfei.quant.ui.market.MarketScreen
 import com.yunfei.quant.ui.onboarding.RomKeepAlivePage
 import com.yunfei.quant.ui.profile.ApiKeyScreen
@@ -131,9 +132,22 @@ fun AppRoot(windowSizeClass: WindowSizeClass) {
                     })
                 }
                 composable("login") {
-                    LoginScreen(vm) {
-                        nav.navigate("home") { popUpTo("login") { inclusive = true } }
-                    }
+                    LoginScreen(
+                        vm = vm,
+                        onSuccess = {
+                            nav.navigate("home") { popUpTo("login") { inclusive = true } }
+                        },
+                        onGoRegister = { nav.navigate("register") },
+                    )
+                }
+                composable("register") {
+                    RegisterScreen(
+                        vm = vm,
+                        onBack = { nav.popBackStack() },
+                        onRegistered = {
+                            nav.navigate("home") { popUpTo("login") { inclusive = true } }
+                        },
+                    )
                 }
                 composable("guide_apikey") {
                     ApiKeyScreen(vm, forceGuide = true) {

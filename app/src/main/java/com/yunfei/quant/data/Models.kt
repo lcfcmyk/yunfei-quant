@@ -2,6 +2,12 @@ package com.yunfei.quant.data
 
 data class LoginReq(val account: String, val password: String)
 
+data class RegisterReq(
+    val account: String,
+    val nickname: String,
+    val password: String,
+)
+
 data class LoginResp(
     val token: String,
     val nickname: String,
